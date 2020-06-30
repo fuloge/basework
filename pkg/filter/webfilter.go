@@ -42,6 +42,36 @@ func (f *Filter) buildResponse(code int, status bool, data interface{}, c *gin.C
 func (f *Filter) Checkauth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		fmt.Println("===========", c.FullPath())
+
+		loginmodul := loginModul{}
+		method := c.Request.Method
+		switch method {
+		case "GET":
+			var values = c.Request.URL.Query()
+			loginmodul.Uid, _ = strconv.ParseInt(values["uid"][0], 10, 64)
+			fmt.Printf("---->parame:%s \n", values)
+		case "PUT", "DELETE", "POST":
+			data, err := c.GetRawData()
+			if configs.EnvConfig.RunMode == 1 {
+				fmt.Printf("---->parame:%s \n", data)
+			}
+			if err != nil {
+				logger.Error(api.HTTPParamErr.Message, zap.String(api.HTTPParamErr.Message, err.Error()))
+				f.buildResponse(api.HTTPParamErr.Code, false, api.HTTPParamErr.Message, c)
+				return
+			}
+
+			if err = json.Unmarshal(data, &loginmodul); err != nil {
+				logger.Error(api.HTTPParamErr.Message, zap.String(api.HTTPParamErr.Message, err.Error()))
+				f.buildResponse(api.HTTPParamErr.Code, false, api.HTTPParamErr.Message, c)
+				return
+			}
+
+			c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
+		default:
+			fmt.Println("no support")
+		}
+
 		if _, ok := configs.WhiteList[c.FullPath()]; ok {
 			//放行
 			c.Next()
@@ -91,34 +121,6 @@ func (f *Filter) Checkauth() gin.HandlerFunc {
 			return
 		}
 
-		loginmodul := loginModul{}
-		method := c.Request.Method
-		switch method {
-		case "GET":
-			var values = c.Request.URL.Query()
-			loginmodul.Uid, _ = strconv.ParseInt(values["uid"][0], 10, 64)
-			fmt.Printf("---->parame:%s \n", values)
-		case "PUT", "DELETE", "POST":
-			data, err := c.GetRawData()
-			if configs.EnvConfig.RunMode == 1 {
-				fmt.Printf("---->parame:%s \n", data)
-			}
-			if err != nil {
-				logger.Error(api.HTTPParamErr.Message, zap.String(api.HTTPParamErr.Message, err.Error()))
-				f.buildResponse(api.HTTPParamErr.Code, false, api.HTTPParamErr.Message, c)
-				return
-			}
-
-			if err = json.Unmarshal(data, &loginmodul); err != nil {
-				logger.Error(api.HTTPParamErr.Message, zap.String(api.HTTPParamErr.Message, err.Error()))
-				f.buildResponse(api.HTTPParamErr.Code, false, api.HTTPParamErr.Message, c)
-				return
-			}
-
-			c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
-		default:
-			fmt.Println("no support")
-		}
 		//var values = c.Request.URL.Query()
 		//if method == "GET"{
 		//	loginmodul.Uid, _ = strconv.ParseInt(values["uid"][0], 10, 64)
