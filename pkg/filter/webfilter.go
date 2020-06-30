@@ -121,30 +121,6 @@ func (f *Filter) Checkauth() gin.HandlerFunc {
 			return
 		}
 
-		//var values = c.Request.URL.Query()
-		//if method == "GET"{
-		//	loginmodul.Uid, _ = strconv.ParseInt(values["uid"][0], 10, 64)
-		//	fmt.Printf("---->parame:%s \n", values)
-		//}else {
-		//	data, err := c.GetRawData()
-		//	if configs.EnvConfig.RunMode == 1 {
-		//		fmt.Printf("---->parame:%s \n", data)
-		//	}
-		//	if err != nil {
-		//		logger.Error(api.HTTPParamErr.Message, zap.String(api.HTTPParamErr.Message, err.Error()))
-		//		f.buildResponse(api.HTTPParamErr.Code, false, api.HTTPParamErr.Message, c)
-		//		return
-		//	}
-		//
-		//	if err = json.Unmarshal(data, &loginmodul); err != nil {
-		//		logger.Error(api.HTTPParamErr.Message, zap.String(api.HTTPParamErr.Message, err.Error()))
-		//		f.buildResponse(api.HTTPParamErr.Code, false, api.HTTPParamErr.Message, c)
-		//		return
-		//	}
-		//
-		//	c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
-		//}
-
 		if m, err := jwt.ParseToken(a); err != nil {
 			f.buildResponse(err.Code, false, err.Message, c)
 			return
