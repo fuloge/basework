@@ -93,7 +93,6 @@ func (f *Filter) Checkauth() gin.HandlerFunc {
 
 		loginmodul := loginModul{}
 		method := c.Request.Method
-		fmt.Println(method)
 		switch method {
 		case "GET":
 			var values = c.Request.URL.Query()
