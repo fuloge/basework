@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/BurntSushi/toml"
-	"github.com/bsir2020/basework/api"
+	"github.com/fuloge/basework/api"
 )
 
 type config struct {

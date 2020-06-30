@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"github.com/boombuler/barcode"
 	"github.com/boombuler/barcode/qr"
-	"github.com/bsir2020/basework/api"
+	"github.com/fuloge/basework/api"
 	"image/png"
 	"strings"
 	"time"

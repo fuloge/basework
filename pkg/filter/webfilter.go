@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/bsir2020/basework/api"
-	"github.com/bsir2020/basework/configs"
-	"github.com/bsir2020/basework/pkg/auth"
-	"github.com/bsir2020/basework/pkg/log"
-	"github.com/bsir2020/basework/pkg/rsa"
+	"github.com/fuloge/basework/api"
+	"github.com/fuloge/basework/configs"
+	"github.com/fuloge/basework/pkg/auth"
+	"github.com/fuloge/basework/pkg/log"
+	"github.com/fuloge/basework/pkg/rsa"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	_ "go.uber.org/zap"
@@ -92,21 +92,57 @@ func (f *Filter) Checkauth() gin.HandlerFunc {
 		}
 
 		loginmodul := loginModul{}
-		data, err := c.GetRawData()
-		if configs.EnvConfig.RunMode == 1 {
-			fmt.Printf("---->parame:%s \n", data)
-		}
-		if err != nil {
-			logger.Error(api.HTTPParamErr.Message, zap.String(api.HTTPParamErr.Message, err.Error()))
-			f.buildResponse(api.HTTPParamErr.Code, false, api.HTTPParamErr.Message, c)
-			return
-		}
+		method := c.Request.Method
+		fmt.Println(method)
+		switch method {
+		case "GET":
+			var values = c.Request.URL.Query()
+			loginmodul.Uid, _ = strconv.ParseInt(values["uid"][0], 10, 64)
+			fmt.Printf("---->parame:%s \n", values)
+		case "PUT", "DELETE", "POST":
+			data, err := c.GetRawData()
+			if configs.EnvConfig.RunMode == 1 {
+				fmt.Printf("---->parame:%s \n", data)
+			}
+			if err != nil {
+				logger.Error(api.HTTPParamErr.Message, zap.String(api.HTTPParamErr.Message, err.Error()))
+				f.buildResponse(api.HTTPParamErr.Code, false, api.HTTPParamErr.Message, c)
+				return
+			}
 
-		if err = json.Unmarshal(data, &loginmodul); err != nil {
-			logger.Error(api.HTTPParamErr.Message, zap.String(api.HTTPParamErr.Message, err.Error()))
-			f.buildResponse(api.HTTPParamErr.Code, false, api.HTTPParamErr.Message, c)
-			return
+			if err = json.Unmarshal(data, &loginmodul); err != nil {
+				logger.Error(api.HTTPParamErr.Message, zap.String(api.HTTPParamErr.Message, err.Error()))
+				f.buildResponse(api.HTTPParamErr.Code, false, api.HTTPParamErr.Message, c)
+				return
+			}
+
+			c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
+		default:
+			fmt.Println("no support")
 		}
+		//var values = c.Request.URL.Query()
+		//if method == "GET"{
+		//	loginmodul.Uid, _ = strconv.ParseInt(values["uid"][0], 10, 64)
+		//	fmt.Printf("---->parame:%s \n", values)
+		//}else {
+		//	data, err := c.GetRawData()
+		//	if configs.EnvConfig.RunMode == 1 {
+		//		fmt.Printf("---->parame:%s \n", data)
+		//	}
+		//	if err != nil {
+		//		logger.Error(api.HTTPParamErr.Message, zap.String(api.HTTPParamErr.Message, err.Error()))
+		//		f.buildResponse(api.HTTPParamErr.Code, false, api.HTTPParamErr.Message, c)
+		//		return
+		//	}
+		//
+		//	if err = json.Unmarshal(data, &loginmodul); err != nil {
+		//		logger.Error(api.HTTPParamErr.Message, zap.String(api.HTTPParamErr.Message, err.Error()))
+		//		f.buildResponse(api.HTTPParamErr.Code, false, api.HTTPParamErr.Message, c)
+		//		return
+		//	}
+		//
+		//	c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
+		//}
 
 		if m, err := jwt.ParseToken(a); err != nil {
 			f.buildResponse(err.Code, false, err.Message, c)
@@ -119,8 +155,6 @@ func (f *Filter) Checkauth() gin.HandlerFunc {
 				return
 			}
 		}
-
-		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
 
 		//放行
 		c.Next()

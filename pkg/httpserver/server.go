@@ -1,8 +1,8 @@
 package httpserver
 
 import (
-	"github.com/bsir2020/basework/configs"
-	"github.com/bsir2020/basework/pkg/filter"
+	"github.com/fuloge/basework/configs"
+	"github.com/fuloge/basework/pkg/filter"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"

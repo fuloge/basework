@@ -3,9 +3,9 @@ package datasource
 import (
 	"database/sql"
 	"fmt"
-	"github.com/bsir2020/basework/api"
-	cfg "github.com/bsir2020/basework/configs"
-	"github.com/bsir2020/basework/pkg/log"
+	"github.com/fuloge/basework/api"
+	cfg "github.com/fuloge/basework/configs"
+	"github.com/fuloge/basework/pkg/log"
 	"github.com/go-xorm/xorm"
 	_ "github.com/lib/pq"
 	"go.uber.org/zap"

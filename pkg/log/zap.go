@@ -1,7 +1,7 @@
 package log
 
 import (
-	cfg "github.com/bsir2020/basework/configs"
+	cfg "github.com/fuloge/basework/configs"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"

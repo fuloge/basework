@@ -2,10 +2,10 @@ package auth
 
 import (
 	"fmt"
-	"github.com/bsir2020/basework/api"
-	cfg "github.com/bsir2020/basework/configs"
-	"github.com/bsir2020/basework/pkg/log"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/fuloge/basework/api"
+	cfg "github.com/fuloge/basework/configs"
+	"github.com/fuloge/basework/pkg/log"
 	"go.uber.org/zap"
 	"strconv"
 	"time"

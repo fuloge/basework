@@ -10,8 +10,8 @@ import (
 	"encoding/base64"
 	"encoding/pem"
 	"fmt"
-	"github.com/bsir2020/basework/api"
-	cfg "github.com/bsir2020/basework/configs"
+	"github.com/fuloge/basework/api"
+	cfg "github.com/fuloge/basework/configs"
 	"io/ioutil"
 )
 

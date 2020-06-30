@@ -2,8 +2,8 @@ package datasource
 
 import (
 	"crypto/tls"
-	"github.com/bsir2020/basework/configs"
 	elastic "github.com/elastic/go-elasticsearch/v7"
+	"github.com/fuloge/basework/configs"
 	"net"
 	"net/http"
 	"time"
@@ -12,8 +12,8 @@ import (
 var (
 	url     string
 	logFile string
-	esuser string
-	passwd string
+	esuser  string
+	passwd  string
 )
 
 func init() {
@@ -30,14 +30,14 @@ type ESClient struct {
 func GetEsClient() (client *ESClient, err error) {
 	esConfig := &elastic.Config{
 		Addresses: []string{url},
-		Username: esuser,
-		Password: passwd,
+		Username:  esuser,
+		Password:  passwd,
 		Transport: &http.Transport{
 			MaxIdleConnsPerHost:   10,
 			ResponseHeaderTimeout: time.Second,
 			DialContext:           (&net.Dialer{Timeout: time.Second}).DialContext,
 			TLSClientConfig: &tls.Config{
-				MinVersion:         tls.VersionTLS11,
+				MinVersion: tls.VersionTLS11,
 			},
 		},
 	}
@@ -51,4 +51,3 @@ func GetEsClient() (client *ESClient, err error) {
 
 	return nil, err
 }
-
