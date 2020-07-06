@@ -41,7 +41,8 @@ func (f *Filter) buildResponse(code int, status bool, data interface{}, c *gin.C
 //请求head,必须包含auth,exp项
 func (f *Filter) Checkauth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		fmt.Println("===========", c.FullPath())
+		str := fmt.Sprintf("method:%s\n path:%s", c.Request.Method, c.FullPath())
+		fmt.Println(str)
 
 		loginmodul := loginModul{}
 		method := c.Request.Method
