@@ -90,10 +90,12 @@ func init() {
 	flag.StringVar(&sqlfile, "sqllog", "", "set sql log file")
 
 	confPath = "./configs/datasources-" + env + ".toml"
+	//test
+	//confPath = "../../configs/datasources-" + env + ".toml"
 
 	_, err := toml.DecodeFile(confPath, &EnvConfig)
 	if err != nil {
-		panic(api.SysConfigErr)
+		panic(api.SysConfigErr.Message)
 	} else {
 		WhiteList = make(map[string]string)
 

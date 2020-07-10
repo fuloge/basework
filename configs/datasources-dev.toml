@@ -3,33 +3,24 @@ runmode = 1 #1:debug 2:release
 concurnum = 5000
 
 [pgsql]
-hosts = ["192.168.1.222"]
+hosts = ["182.16.39.218"]
 ports = [5432]
 user = "postgres"
-password = "psql"
-dbname = "postgres"
+password = "UM%&*qc!038"
+dbname = "financass"
 
 [redis]
-hosts = ["redis://192.168.1.222:6379"]
+hosts = ["redis://182.16.39.218:6379"]
 password = "xjwl"
+db = 9
 maxActive = 3000
 MaxIdle = 2000
 IdleTimeoutSec = 240
-db = 0
 
 [rabbitmq]
-url = "amqp://game:123456@192.168.1.222:5672/game"
+url = "amqp://game:123456@182.16.39.218:5672/game"
 qgame = "gameTest"
 qgamefeed = "gameFeed"
-#user = "test"
-#password = "test"
-#ip = ["192.168.1.222"]
-#port = [5672]
-#vhost = ["test"]
-#quName = ["test.xx"]
-#rtKey = ["test.xx"]
-#exName = ["test.xx"]
-#exType = ["topic"]
 
 [log]
 logfile = "item.log"
@@ -42,7 +33,7 @@ privateKey = "./scripts/private_key.pem"
 publickey = "./scripts/public_key.pem"
 
 [fillter]
-array = ["/login/","/getToken/"]
+array = ["/getToken/","/logout/"]
 
 [es]
 user = "elastic"

@@ -9,7 +9,7 @@ import (
 
 func TestJWT(t *testing.T) {
 	jwt := New()
-	token := jwt.CreateToken(12345)
+	token, _ := jwt.CreateToken(12345, time.Now().Add(time.Hour*time.Duration(1)).Unix())
 	fmt.Println(token)
 
 	time.Sleep(time.Second * 10)
@@ -29,4 +29,19 @@ func TestJWT2(t *testing.T) {
 	} else {
 		fmt.Println("token is valid")
 	}
+}
+
+func TestGoogleAuth_GetCode(t *testing.T) {
+	gauth := GoogleAuth{}
+	sect := gauth.GetSecret()
+	println("sect", sect)
+	code, _ := gauth.GetCode(sect)
+	ok, _ := gauth.VerifyCode(sect, code)
+	if ok {
+		println("is ", ok)
+	}
+
+	er := gauth.CreateQRcode("xcv", sect, 100)
+	println(er)
+
 }
