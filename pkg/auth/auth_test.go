@@ -36,12 +36,12 @@ func TestGoogleAuth_GetCode(t *testing.T) {
 	sect := gauth.GetSecret()
 	println("sect", sect)
 	code, _ := gauth.GetCode(sect)
+	println("code", code)
+	time.Sleep(time.Second * 22)
 	ok, _ := gauth.VerifyCode(sect, code)
-	if ok {
-		println("is ", ok)
-	}
+	println("verify code:", ok)
 
-	er := gauth.CreateQRcode("xcv", sect, 100)
-	println(er)
+	//er := gauth.CreateQRcode("xcv", sect, 100)
+	//println(er)
 
 }
