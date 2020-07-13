@@ -37,7 +37,7 @@ func TestGoogleAuth_GetCode(t *testing.T) {
 	println("sect", sect)
 	code, _ := gauth.GetCode(sect)
 	println("code", code)
-	time.Sleep(time.Second * 22)
+	time.Sleep(time.Second * 20)
 	ok, _ := gauth.VerifyCode(sect, code)
 	println("verify code:", ok)
 
