@@ -16,8 +16,13 @@ type config struct {
 	Authkey   *AuthkeyConfig
 	Fillter   *FillterConfig
 	ES        *ESConfig
+	Web       *WebConfig
 	RunMode   int
 	Concurnum int
+}
+
+type WebConfig struct {
+	ports []int
 }
 
 type ESConfig struct {
@@ -89,9 +94,9 @@ func init() {
 	flag.StringVar(&logfile, "logfile", "", "set log file")
 	flag.StringVar(&sqlfile, "sqllog", "", "set sql log file")
 
-	confPath = "./configs/datasources-" + env + ".toml"
+	//confPath = "./configs/datasources-" + env + ".toml"
 	//test
-	//confPath = "../../configs/datasources-" + env + ".toml"
+	confPath = "../../configs/datasources-" + env + ".toml"
 
 	_, err := toml.DecodeFile(confPath, &EnvConfig)
 	if err != nil {

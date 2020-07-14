@@ -38,8 +38,11 @@ array = ["/getToken/","/logout/"]
 [es]
 user = "es"
 passwd = "%^CV90)sd138~"
-url = "http://192.168.0.222:9200"
+url = "http://182.16.39.218:9200"
 logfile = "./eslog.log"
+
+[web]
+port = [20001]
 
 
 
