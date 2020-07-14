@@ -22,7 +22,7 @@ type config struct {
 }
 
 type WebConfig struct {
-	ports []int
+	Ports []int64
 }
 
 type ESConfig struct {
