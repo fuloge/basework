@@ -45,7 +45,7 @@ func GetEsClient() (client *ESClient, err error) {
 	esclient, err := elastic.NewClient(*esConfig)
 	if esclient != nil {
 		return &ESClient{
-			client: esclient,
+			Client: esclient,
 		}, nil
 	}
 
