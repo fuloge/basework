@@ -24,7 +24,7 @@ func init() {
 }
 
 type ESClient struct {
-	client *elastic.Client
+	Client *elastic.Client
 }
 
 func GetEsClient() (client *ESClient, err error) {
