@@ -111,6 +111,8 @@ func RedisExec(cmd string, key interface{}, args ...interface{}) (interface{}, e
 	for {
 		if con.Err() != nil {
 			con = redisPl.Get()
+		} else {
+			break
 		}
 	}
 
