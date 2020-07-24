@@ -107,6 +107,12 @@ func DelLock(val string) {
 func RedisExec(cmd string, key interface{}, args ...interface{}) (interface{}, error) {
 	con, _ := GetRedisConn()
 	defer con.Close()
+	for {
+		if con.Err() != nil {
+			con, _ = GetRedisConn()
+		}
+	}
+
 	parmas := make([]interface{}, 0)
 	parmas = append(parmas, key)
 
