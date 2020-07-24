@@ -28,12 +28,14 @@ func init() {
 	maxActive = cfg.EnvConfig.Redis.MaxActive
 	maxIdle = cfg.EnvConfig.Redis.MaxIdle
 	idleTimeoutSec = cfg.EnvConfig.Redis.IdleTimeoutSec
+
+	newRedisPool()
 }
 
 var once sync.Once
 var redisPl *redis.Pool
 
-func newRedisPool() *redis.Pool {
+func newRedisPool() {
 	logger := log.New()
 
 	once.Do(func() {
@@ -68,12 +70,11 @@ func newRedisPool() *redis.Pool {
 		}
 	})
 
-	return redisPl
+	//return redisPl
 }
 
 func GetRedisConn() (redis.Conn, *redis.Pool) {
-	pool := newRedisPool()
-	return pool.Get(), pool
+	return redisPl.Get(), redisPl
 }
 
 //key:"lock_uid"
@@ -105,11 +106,11 @@ func DelLock(val string) {
 //}
 
 func RedisExec(cmd string, key interface{}, args ...interface{}) (interface{}, error) {
-	con, _ := GetRedisConn()
+	con := redisPl.Get()
 	defer con.Close()
 	for {
 		if con.Err() != nil {
-			con, _ = GetRedisConn()
+			con = redisPl.Get()
 		}
 	}
 
@@ -125,6 +126,5 @@ func RedisExec(cmd string, key interface{}, args ...interface{}) (interface{}, e
 }
 
 func CloseReidsPool() {
-	pool := newRedisPool()
-	pool.Close()
+	redisPl.Close()
 }
