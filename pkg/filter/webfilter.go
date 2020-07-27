@@ -53,9 +53,9 @@ func (f *Filter) Checkauth() gin.HandlerFunc {
 			fmt.Printf("---->parame:%s \n", values)
 		case "PUT", "DELETE", "POST":
 			data, err := c.GetRawData()
-			if configs.EnvConfig.RunMode == 1 {
-				fmt.Printf("---->parame:%s \n", data)
-			}
+			//if configs.EnvConfig.RunMode == 1 {
+			//	fmt.Printf("---->parame:%s \n", data)
+			//}
 			if err != nil {
 				logger.Error(api.HTTPParamErr.Message, zap.String(api.HTTPParamErr.Message, err.Error()))
 				f.buildResponse(api.HTTPParamErr.Code, false, api.HTTPParamErr.Message, c)
