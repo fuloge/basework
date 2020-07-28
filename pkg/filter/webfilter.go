@@ -75,18 +75,6 @@ func (f *Filter) Checkauth() gin.HandlerFunc {
 		//	fmt.Println("no support")
 		//}
 
-		u := c.Request.Header.Get("uid")
-		u, error := rsa.RsaDecrypt(u)
-		if error != nil {
-			f.buildResponse(api.RSADecERR.Code, false, api.RSADecERR.Message, c)
-			return
-		}
-		uint, err := strconv.ParseInt(u, 10, 64)
-		if err != nil || uint == 0 {
-			f.buildResponse(api.HTTPUidErr.Code, false, api.HTTPUidErr.Message, c)
-			return
-		}
-
 		path := c.FullPath()
 
 		if strings.Contains(path, ".") {
@@ -100,6 +88,18 @@ func (f *Filter) Checkauth() gin.HandlerFunc {
 			//放行
 			c.Next()
 
+			return
+		}
+
+		u := c.Request.Header.Get("uid")
+		u, error := rsa.RsaDecrypt(u)
+		if error != nil {
+			f.buildResponse(api.RSADecERR.Code, false, api.RSADecERR.Message, c)
+			return
+		}
+		uint, err := strconv.ParseInt(u, 10, 64)
+		if err != nil || uint == 0 {
+			f.buildResponse(api.HTTPUidErr.Code, false, api.HTTPUidErr.Message, c)
 			return
 		}
 
