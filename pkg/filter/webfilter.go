@@ -11,6 +11,7 @@ import (
 	_ "go.uber.org/zap"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -80,8 +81,22 @@ func (f *Filter) Checkauth() gin.HandlerFunc {
 			f.buildResponse(api.RSADecERR.Code, false, api.RSADecERR.Message, c)
 			return
 		}
+		uint, err := strconv.ParseInt(u, 10, 64)
+		if err != nil || uint == 0 {
+			f.buildResponse(api.HTTPUidErr.Code, false, api.HTTPUidErr.Message, c)
+			return
+		}
 
-		if _, ok := configs.WhiteList[c.FullPath()]; ok {
+		path := c.FullPath()
+
+		if strings.Contains(path, ".") {
+			//放行
+			c.Next()
+
+			return
+		}
+
+		if _, ok := configs.WhiteList[path]; ok {
 			//放行
 			c.Next()
 
@@ -135,9 +150,13 @@ func (f *Filter) Checkauth() gin.HandlerFunc {
 			return
 		} else {
 			uid := m["uid"].(string)
-			Uid, _ := strconv.ParseInt(uid, 10, 64)
-			ustr, _ := strconv.ParseInt(u, 10, 64)
-			if Uid != ustr {
+			Uid, err := strconv.ParseInt(uid, 10, 64)
+			if err != nil {
+				f.buildResponse(api.HTTPUidErr.Code, false, api.HTTPUidErr.Message, c)
+				return
+			}
+
+			if Uid != uint {
 				f.buildResponse(api.HTTPUidErr.Code, false, api.HTTPUidErr.Message, c)
 				return
 			}
