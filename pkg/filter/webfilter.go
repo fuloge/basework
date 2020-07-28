@@ -11,6 +11,7 @@ import (
 	_ "go.uber.org/zap"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -86,7 +87,16 @@ func (f *Filter) Checkauth() gin.HandlerFunc {
 			return
 		}
 
-		if _, ok := configs.WhiteList[c.FullPath()]; ok {
+		path := c.FullPath()
+
+		if strings.Contains(path, ".") {
+			//放行
+			c.Next()
+
+			return
+		}
+
+		if _, ok := configs.WhiteList[path]; ok {
 			//放行
 			c.Next()
 
