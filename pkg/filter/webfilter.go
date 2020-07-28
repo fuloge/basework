@@ -41,7 +41,7 @@ func (f *Filter) buildResponse(code int, status bool, data interface{}, c *gin.C
 //请求head,必须包含auth,exp项
 func (f *Filter) Checkauth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		str := fmt.Sprintf("------method:%s\n path:%s", c.Request.Method, c.FullPath())
+		str := fmt.Sprintf("------method:%s path:%s", c.Request.Method, c.FullPath())
 		fmt.Println(str)
 
 		loginmodul := loginModul{}
@@ -53,20 +53,26 @@ func (f *Filter) Checkauth() gin.HandlerFunc {
 			fmt.Printf("---->parame:%s \n", values)
 		case "PUT", "DELETE", "POST":
 			data, err := c.GetRawData()
+
 			//if configs.EnvConfig.RunMode == 1 {
+			//
 			//	fmt.Printf("---->parame:%s \n", data)
 			//}
+
 			if err != nil {
 				logger.Error(api.HTTPParamErr.Message, zap.String(api.HTTPParamErr.Message, err.Error()))
 				f.buildResponse(api.HTTPParamErr.Code, false, api.HTTPParamErr.Message, c)
 				return
 			}
 
-			if err = json.Unmarshal(data, &loginmodul); err != nil {
+			dataMap := make(map[string]interface{})
+			if err = json.Unmarshal(data, &dataMap); err != nil {
 				logger.Error(api.HTTPParamErr.Message, zap.String(api.HTTPParamErr.Message, err.Error()))
 				f.buildResponse(api.HTTPParamErr.Code, false, api.HTTPParamErr.Message, c)
 				return
 			}
+
+			loginmodul.Uid = dataMap["uid"].(int64)
 
 			c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
 		default:
