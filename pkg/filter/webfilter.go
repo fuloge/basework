@@ -72,7 +72,7 @@ func (f *Filter) Checkauth() gin.HandlerFunc {
 				return
 			}
 
-			loginmodul.Uid = dataMap["uid"].(int64)
+			loginmodul.Uid = int64(dataMap["uid"].(float64))
 
 			c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
 		default:
