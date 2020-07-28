@@ -23,7 +23,7 @@ const (
 	DELETE_METHOD = 3
 )
 
-func New() *Server {
+func New(middlewares ...gin.HandlerFunc) *Server {
 	switch configs.EnvConfig.RunMode {
 	case 1:
 		gin.SetMode(gin.DebugMode)
@@ -33,6 +33,10 @@ func New() *Server {
 
 	e := gin.Default()
 	e.Use(cross())
+
+	for _, fn := range middlewares {
+		e.Use(fn)
+	}
 
 	filter := filter.Filter{}
 	e.Use(filter.Checkauth())
