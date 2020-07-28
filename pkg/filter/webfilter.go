@@ -1,8 +1,6 @@
 package filter
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"github.com/fuloge/basework/api"
 	"github.com/fuloge/basework/configs"
@@ -10,9 +8,7 @@ import (
 	"github.com/fuloge/basework/pkg/log"
 	"github.com/fuloge/basework/pkg/rsa"
 	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 	_ "go.uber.org/zap"
-	"io/ioutil"
 	"net/http"
 	"strconv"
 	"time"
@@ -44,39 +40,45 @@ func (f *Filter) Checkauth() gin.HandlerFunc {
 		str := fmt.Sprintf("------method:%s path:%s", c.Request.Method, c.FullPath())
 		fmt.Println(str)
 
-		loginmodul := loginModul{}
-		method := c.Request.Method
-		switch method {
-		case "GET":
-			var values = c.Request.URL.Query()
-			loginmodul.Uid, _ = strconv.ParseInt(values["uid"][0], 10, 64)
-			fmt.Printf("---->parame:%s \n", values)
-		case "PUT", "DELETE", "POST":
-			data, err := c.GetRawData()
+		//method := c.Request.Method
+		//switch method {
+		//case "GET":
+		//	var values = c.Request.URL.Query()
+		//	loginmodul.Uid, _ = strconv.ParseInt(values["uid"][0], 10, 64)
+		//	fmt.Printf("---->parame:%s \n", values)
+		//case "PUT", "DELETE", "POST":
+		//	data, err := c.GetRawData()
+		//
+		//	//if configs.EnvConfig.RunMode == 1 {
+		//	//
+		//	//	fmt.Printf("---->parame:%s \n", data)
+		//	//}
+		//
+		//	if err != nil {
+		//		logger.Error(api.HTTPParamErr.Message, zap.String(api.HTTPParamErr.Message, err.Error()))
+		//		f.buildResponse(api.HTTPParamErr.Code, false, api.HTTPParamErr.Message, c)
+		//		return
+		//	}
+		//
+		//	dataMap := make(map[string]interface{})
+		//	if err = json.Unmarshal(data, &dataMap); err != nil {
+		//		logger.Error(api.HTTPParamErr.Message, zap.String(api.HTTPParamErr.Message, err.Error()))
+		//		f.buildResponse(api.HTTPParamErr.Code, false, api.HTTPParamErr.Message, c)
+		//		return
+		//	}
+		//
+		//	loginmodul.Uid = int64(dataMap["uid"].(float64))
+		//
+		//	c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
+		//default:
+		//	fmt.Println("no support")
+		//}
 
-			//if configs.EnvConfig.RunMode == 1 {
-			//
-			//	fmt.Printf("---->parame:%s \n", data)
-			//}
-
-			if err != nil {
-				logger.Error(api.HTTPParamErr.Message, zap.String(api.HTTPParamErr.Message, err.Error()))
-				f.buildResponse(api.HTTPParamErr.Code, false, api.HTTPParamErr.Message, c)
-				return
-			}
-
-			dataMap := make(map[string]interface{})
-			if err = json.Unmarshal(data, &dataMap); err != nil {
-				logger.Error(api.HTTPParamErr.Message, zap.String(api.HTTPParamErr.Message, err.Error()))
-				f.buildResponse(api.HTTPParamErr.Code, false, api.HTTPParamErr.Message, c)
-				return
-			}
-
-			loginmodul.Uid = int64(dataMap["uid"].(float64))
-
-			c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
-		default:
-			fmt.Println("no support")
+		u := c.Request.Header.Get("uid")
+		u, error := rsa.RsaDecrypt(u)
+		if error != nil {
+			f.buildResponse(api.RSADecERR.Code, false, api.RSADecERR.Message, c)
+			return
 		}
 
 		if _, ok := configs.WhiteList[c.FullPath()]; ok {
@@ -134,7 +136,8 @@ func (f *Filter) Checkauth() gin.HandlerFunc {
 		} else {
 			uid := m["uid"].(string)
 			Uid, _ := strconv.ParseInt(uid, 10, 64)
-			if Uid != loginmodul.Uid {
+			ustr, _ := strconv.ParseInt(u, 10, 64)
+			if Uid != ustr {
 				f.buildResponse(api.HTTPUidErr.Code, false, api.HTTPUidErr.Message, c)
 				return
 			}
