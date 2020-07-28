@@ -58,7 +58,7 @@ func init() {
 }
 
 // 加密
-func RsaEncrypt(origData []byte) ([]byte, *api.Errno) {
+func RsaEncrypt(origData []byte) (string, *api.Errno) {
 	partLen := pub.N.BitLen()/8 - 11
 	chunks := split([]byte(origData), partLen)
 	buffer := bytes.NewBufferString("")
@@ -66,19 +66,21 @@ func RsaEncrypt(origData []byte) ([]byte, *api.Errno) {
 		bytes, err := rsa.EncryptPKCS1v15(rand.Reader, pub, chunk)
 		if err != nil {
 			fmt.Println(api.RSAEncERR, err.Error())
-			return nil, api.RSAEncERR
+			return "", api.RSAEncERR
 		}
 
 		buffer.Write(bytes)
 	}
 
-	return buffer.Bytes(), nil
+	return base64.StdEncoding.EncodeToString(buffer.Bytes()), nil
 }
 
 // 解密
 func RsaDecrypt(ciphertext string) (string, *api.Errno) {
+	encryptedDecodeBytes, _ := base64.StdEncoding.DecodeString(ciphertext)
 	partLen := pub.N.BitLen() / 8
-	chunks := split([]byte([]byte(ciphertext)), partLen)
+	chunks := split(encryptedDecodeBytes, partLen)
+	//chunks := split([]byte([]byte(ciphertext)), partLen)
 	buffer := bytes.NewBufferString("")
 	for _, chunk := range chunks {
 		decrypted, err := rsa.DecryptPKCS1v15(rand.Reader, priv, chunk)
