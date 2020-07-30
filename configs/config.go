@@ -26,7 +26,7 @@ type WebConfig struct {
 }
 
 type ESConfig struct {
-	Url     string
+	Url     []string
 	User    string
 	Passwd  string
 	LogFile string
