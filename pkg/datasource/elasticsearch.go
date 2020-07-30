@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	url     string
+	url     []string
 	logFile string
 	esuser  string
 	passwd  string
@@ -29,7 +29,7 @@ type ESClient struct {
 
 func GetEsClient() (client *ESClient, err error) {
 	esConfig := &elastic.Config{
-		Addresses: []string{url},
+		Addresses: url,
 		Username:  esuser,
 		Password:  passwd,
 		Transport: &http.Transport{
@@ -40,6 +40,8 @@ func GetEsClient() (client *ESClient, err error) {
 				MinVersion: tls.VersionTLS11,
 			},
 		},
+		DisableRetry:         true,
+		EnableRetryOnTimeout: true,
 	}
 
 	esclient, err := elastic.NewClient(*esConfig)
