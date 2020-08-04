@@ -6,12 +6,12 @@ import (
 	"github.com/fuloge/basework/api"
 	cfg "github.com/fuloge/basework/configs"
 	"github.com/fuloge/basework/pkg/log"
-	"github.com/go-xorm/xorm"
 	_ "github.com/lib/pq"
 	"go.uber.org/zap"
 	"os"
 	"time"
-	"xorm.io/core"
+	"xorm.io/xorm"
+	xlog "xorm.io/xorm/log"
 )
 
 var (
@@ -58,12 +58,12 @@ func GetPGSql() (pgEngine *xorm.Engine, errno *api.Errno) {
 		return
 	}
 
-	pgEngine.Logger().SetLevel(core.LOG_DEBUG)
-	pgEngine.SetLogger(xorm.NewSimpleLogger(logFile))
+	pgEngine.Logger().SetLevel(xlog.LOG_INFO)
+	pgEngine.SetLogger(xlog.NewSimpleLogger(logFile))
 	pgEngine.SetMaxIdleConns(10)
 	pgEngine.SetMaxOpenConns(1000)
 	pgEngine.SetConnMaxLifetime(time.Second * 10)
-	pgEngine.ShowExecTime(true)
+	//pgEngine.ShowExecTime(true)
 	pgEngine.ShowSQL(true)
 
 	if err = pgEngine.Ping(); err != nil {
