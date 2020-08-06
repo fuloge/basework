@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/BurntSushi/toml"
 	"github.com/fuloge/basework/api"
+	"io/ioutil"
 	"os"
 	"runtime"
 	"strings"
@@ -93,25 +94,26 @@ var (
 )
 
 func init() {
-	path, _ := os.Getwd()
-	println(path)
-
-	cpath := ""
-
+	spliter := ""
 	switch runtime.GOOS {
 	case "windows":
-		subph := strings.Split(path, "\\")
-		cpath = subph[0] + "/" + subph[1]
+		spliter = "\\"
 	case "linux":
-		subph := strings.Split(path, "/")
-		cpath = "/" + subph[0] + "/"
+		spliter = "/"
 	}
 
 	flag.StringVar(&env, "env", "dev", "set running env")
 	flag.StringVar(&logfile, "logfile", "", "set log file")
 	flag.StringVar(&sqlfile, "sqllog", "", "set sql log file")
 
-	confPath = cpath + "/configs/datasources-" + env + ".toml"
+	file := "datasources-" + env + ".toml"
+
+	path, isOK := Exists(file, spliter)
+	if !isOK {
+		panic("config file no found")
+	}
+
+	confPath = path + spliter + file
 
 	println(confPath)
 
@@ -136,4 +138,38 @@ func init() {
 			WhiteList[path] = path
 		}
 	}
+}
+
+// 判断所给路径文件/文件夹是否存在
+func Exists(cf string, splitter string) (string, bool) {
+	path, _ := os.Getwd()
+	pp := path + "\\configs"
+	println(pp)
+
+	fileInfoList, err := ioutil.ReadDir(pp)
+	if err != nil {
+		println(err)
+	}
+
+	isOK := false
+
+	for {
+		for _, f := range fileInfoList {
+			if strings.EqualFold(f.Name(), cf) {
+				isOK = true
+				break
+			}
+		}
+
+		if isOK {
+			break
+		} else {
+			path = path[0:strings.LastIndex(path, splitter)]
+			pp = path + "\\configs"
+			println("--", pp)
+			fileInfoList, _ = ioutil.ReadDir(pp)
+		}
+	}
+
+	return pp, isOK
 }
