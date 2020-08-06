@@ -165,7 +165,7 @@ func Exists(cf string, splitter string) (string, bool) {
 			break
 		} else {
 			path = path[0:strings.LastIndex(path, splitter)]
-			pp = path + "\\configs"
+			pp = path + splitter + "configs"
 			println("--", pp)
 			fileInfoList, _ = ioutil.ReadDir(pp)
 		}
