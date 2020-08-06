@@ -29,8 +29,8 @@ sqlog = "sql.log"
 [authkey]
 key = "widXNlcm5hb@#￥iOiLlvKD%￥uIkiLCJm&WxsX25*bWUiOiL"
 subject = "happy new year"
-privateKey = "./scripts/private_key.pem"
-publickey = "./scripts/public_key.pem"
+privateKey = "private_key.pem"
+publickey = "public_key.pem"
 
 [fillter]
 array = ["/getToken/","/logout/"]
