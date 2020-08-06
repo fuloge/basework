@@ -163,7 +163,7 @@ func split(buf []byte, lim int) [][]byte {
 // 判断所给路径文件/文件夹是否存在
 func Exists(cf string, splitter string) (string, bool) {
 	path, _ := os.Getwd()
-	pp := path + "\\scripts"
+	pp := path + splitter + "scripts"
 	println(pp)
 
 	fileInfoList, err := ioutil.ReadDir(pp)
@@ -185,7 +185,7 @@ func Exists(cf string, splitter string) (string, bool) {
 			break
 		} else {
 			path = path[0:strings.LastIndex(path, splitter)]
-			pp = path + splitter + "configs"
+			pp = path + splitter + "scripts"
 			println("--", pp)
 			fileInfoList, _ = ioutil.ReadDir(pp)
 		}
