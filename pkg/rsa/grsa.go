@@ -13,6 +13,9 @@ import (
 	"github.com/fuloge/basework/api"
 	cfg "github.com/fuloge/basework/configs"
 	"io/ioutil"
+	"os"
+	"runtime"
+	"strings"
 )
 
 var (
@@ -23,13 +26,39 @@ var (
 )
 
 func init() {
+	spliter := ""
+	switch runtime.GOOS {
+	case "windows":
+		spliter = "\\"
+	case "linux":
+		spliter = "/"
+	}
+
+	path, isOK := Exists(cfg.EnvConfig.Authkey.PrivateKey, spliter)
+	if !isOK {
+		panic("config file no found")
+	}
+
+	confPath := path + spliter + cfg.EnvConfig.Authkey.PrivateKey
+
+	println(confPath)
+
 	var err error
-	privateKey, err = ioutil.ReadFile(cfg.EnvConfig.Authkey.PrivateKey)
+	privateKey, err = ioutil.ReadFile(confPath)
 	if err != nil {
 		panic("read private pem fail")
 	}
 
-	publicKey, err = ioutil.ReadFile(cfg.EnvConfig.Authkey.Publickey)
+	path, isOK = Exists(cfg.EnvConfig.Authkey.Publickey, spliter)
+	if !isOK {
+		panic("config file no found")
+	}
+
+	confPath = path + spliter + cfg.EnvConfig.Authkey.Publickey
+
+	println(confPath)
+
+	publicKey, err = ioutil.ReadFile(confPath)
 	if err != nil {
 		panic("read public pem fail")
 	}
@@ -129,4 +158,38 @@ func split(buf []byte, lim int) [][]byte {
 		chunks = append(chunks, buf[:len(buf)])
 	}
 	return chunks
+}
+
+// 判断所给路径文件/文件夹是否存在
+func Exists(cf string, splitter string) (string, bool) {
+	path, _ := os.Getwd()
+	pp := path + "\\scripts"
+	println(pp)
+
+	fileInfoList, err := ioutil.ReadDir(pp)
+	if err != nil {
+		println(err)
+	}
+
+	isOK := false
+
+	for {
+		for _, f := range fileInfoList {
+			if strings.EqualFold(f.Name(), cf) {
+				isOK = true
+				break
+			}
+		}
+
+		if isOK {
+			break
+		} else {
+			path = path[0:strings.LastIndex(path, splitter)]
+			pp = path + splitter + "configs"
+			println("--", pp)
+			fileInfoList, _ = ioutil.ReadDir(pp)
+		}
+	}
+
+	return pp, isOK
 }
