@@ -143,7 +143,7 @@ func init() {
 // 判断所给路径文件/文件夹是否存在
 func Exists(cf string, splitter string) (string, bool) {
 	path, _ := os.Getwd()
-	pp := path + "\\configs"
+	pp := path + splitter + "configs"
 	println(pp)
 
 	fileInfoList, err := ioutil.ReadDir(pp)
