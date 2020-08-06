@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"github.com/BurntSushi/toml"
 	"github.com/fuloge/basework/api"
+	"os"
+	"runtime"
+	"strings"
 )
 
 type config struct {
@@ -90,13 +93,27 @@ var (
 )
 
 func init() {
+	path, _ := os.Getwd()
+	println(path)
+
+	cpath := ""
+
+	switch runtime.GOOS {
+	case "windows":
+		subph := strings.Split(path, "\\")
+		cpath = subph[0] + "/" + subph[1]
+	case "linux":
+		subph := strings.Split(path, "/")
+		cpath = "/" + subph[0] + "/"
+	}
+
 	flag.StringVar(&env, "env", "dev", "set running env")
 	flag.StringVar(&logfile, "logfile", "", "set log file")
 	flag.StringVar(&sqlfile, "sqllog", "", "set sql log file")
 
-	confPath = "./configs/datasources-" + env + ".toml"
-	//test
-	//confPath = "../../configs/datasources-" + env + ".toml"
+	confPath = cpath + "/configs/datasources-" + env + ".toml"
+
+	println(confPath)
 
 	_, err := toml.DecodeFile(confPath, &EnvConfig)
 	if err != nil {
